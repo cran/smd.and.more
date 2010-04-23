@@ -22,9 +22,9 @@ smd.t.test(x, ...)
 
 \method{smd.t.test}{default}(x, y, Ynm = "Y", Xnm = "X", 
            X1nm = "Group1", X2nm = "Group2", conf.level = 0.95,
-           digits = 2, bw1 = "nrd", bw2 = "nrd", ...)
+           digits = 2, bw1 = "nrd", bw2 = "nrd", \dots)
 
-\method{smd.t.test}{formula}(formula, data, ...)
+\method{smd.t.test}{formula}(formula, data, \dots)
 }
 
 \arguments{
@@ -43,7 +43,7 @@ smd.t.test(x, ...)
   \item{Xnm}{Name of predictor variable, the grouping variable or factor with exactly two levels.}
   \item{X1nm}{Value of grouping variable, the level that defines the first group.}
   \item{X2nm}{Value of grouping variable, the level that defines the second group.}
-  \item{...}{Further arguments to be passed to or from methods.}
+  \item{\dots}{Further arguments to be passed to or from methods.}
 }
 
 \details{
@@ -73,7 +73,7 @@ is listed as the first group.  The result is
 that the resulting mean difference, as well as the standardized mean difference, is always non-negative.
 }
 
-\author{David W. Gerbing \email{davidg@sba.pdx.edu}}
+\author{David W. Gerbing (Portland State University; \email{davidg@sba.pdx.edu})}
 
 \examples{
 # ----------------------------------------------------------

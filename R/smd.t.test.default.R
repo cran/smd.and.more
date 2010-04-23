@@ -40,7 +40,7 @@ function(YA, YB) {
 	swsq <- (df1*v1 + df2*v2) / (df1 + df2)
 	sw <- sqrt(swsq)
 	sw.out <- round(sw,digits)
-	cat("Equal Group Variances Assumed, Within-cell Standard Deviation:  ", sw.out, "\n\n")
+	cat("Equal Group Variances Assumed, Within-group Standard Deviation:  ", sw.out, "\n\n")
 
 	# mean diff and standardized mean diff
 	mdiff <- m1 - m2
@@ -93,6 +93,7 @@ function(YA, YB) {
 	cat("\n")
 
 	# Homogeneity of Variance
+	# Var Ratio
 	if (v1 >= v2) {
 		vratio <- v1/v2
 		vr <- paste(toString(round(v1,digits+1)), "/", toString(round(v2,digits+1)), sep="")
@@ -117,6 +118,7 @@ function(YA, YB) {
 	cat("Variance Ratio test:  F = ", vr, " = ", v.out, ",  df = ", df.num, ";", df.den, ",  p-value = ", 
 			pv.out, sep="", "\n")
 
+	# Levene
 	YAm <- abs(YA - median(YA))
 	YBm <- abs(YB - median(YB))
 	t.bf <- t.test(YAm, YBm, var.equal=TRUE)
@@ -129,6 +131,9 @@ function(YA, YB) {
 
 
 	cat("\n\n------ Inference ------\n\n")
+	
+	sterr <- sw * sqrt(1/n1 + 1/n2)
+	cat("Standard Error of Mean Difference: SE = ", round(sterr,digits), "\n\n")
 
 	# t-test
 	tt <- t.test(YA, YB, var.equal=TRUE, conf.level=conf.level)
