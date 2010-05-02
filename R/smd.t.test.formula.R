@@ -20,7 +20,7 @@ function (formula, data, ...) {
 	gu <- unique(g)
 	DATA <- split(mf[[response]], g)
 	names(DATA) <- c("Y1", "Y2")
-	attach(DATA)
+	attach(DATA, warn.conflicts=FALSE)
 	
 	smd.t.test(Y1, Y2, Ynm=Ynm, Xnm=Xnm, X1nm=levels(gu)[1], X2nm=levels(gu)[2], ...)
 

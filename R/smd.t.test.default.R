@@ -1,6 +1,6 @@
 smd.t.test.default <-
-function(x, y, Ynm = "Y", Xnm = "X", 
-           X1nm = "Group1", X2nm = "Group2", conf.level = 0.95,
+function(x, y, Ynm = "Y", Xnm = "X", X1nm = "Group1", X2nm = "Group2", 
+           conf.level = 0.95, mmd = NULL, msmd = NULL,
            digits = 2, bw1 = "nrd", bw2 = "nrd", ...) {
 
 
@@ -14,12 +14,12 @@ function(YA, YB) {
 
 	cat("------ Description ------\n\n")
 
-	n1 <- length(YA)
-	n2 <- length(YB)
-	m1 <- mean(YA)
-	m2 <- mean(YB)
-	s1 <- sd(YA)
-	s2 <- sd(YB)
+	n1 <<- length(YA)
+	n2 <<- length(YB)
+	m1 <<- mean(YA)
+	m2 <<- mean(YB)
+	s1 <<- sd(YA)
+	s2 <<- sd(YB)
 	v1 <- var(YA)
 	v2 <- var(YB)
 
@@ -30,17 +30,20 @@ function(YA, YB) {
 	s1.out <- round(s1,digits)
 	s2.out <- round(s2,digits)
 	Xnmval <- paste(Xnm, X1nm)
-	cat(Ynm, " for ", Xnmval, ":  n = ", n1, ",   mean = ", m1.out, ",   sd = ", s1.out, sep="", "\n")
+	mytitle <- paste(Ynm, " for ", Xnmval, ":  n = ", sep="")
+	cat(mytitle, n1, ",   mean = ", m1.out, ",   sd = ", s1.out, sep="", "\n")
 	Xnmval <- paste(Xnm, X2nm)
-	cat(Ynm, " for ", Xnmval, ":  n = ", n2, ",   mean = ", m2.out, ",   sd = ", s2.out, sep="", "\n\n")
+	mytitle <- paste(Ynm, " for ", Xnmval, ":  n = ", sep="")
+	cat(mytitle, n2, ",   mean = ", m2.out, ",   sd = ", s2.out, sep="", "\n\n")
 
 	# sw
 	df1 <- n1 - 1
 	df2 <- n2 - 1
 	swsq <- (df1*v1 + df2*v2) / (df1 + df2)
-	sw <- sqrt(swsq)
+	sw <<- sqrt(swsq)
 	sw.out <- round(sw,digits)
-	cat("Equal Group Variances Assumed, Within-group Standard Deviation:  ", sw.out, "\n\n")
+	cat("Equal Group Variances Assumed, Within-group Standard Deviation:  ", 
+	    sw.out, "\n\n")
 
 	# mean diff and standardized mean diff
 	mdiff <- m1 - m2
@@ -48,22 +51,25 @@ function(YA, YB) {
 	cat("Mean Difference of ", Ynm, ":  " , mdiff.out, sep="", "\n\n")
 	
 	# smd
-	d <- mdiff/sw
-	d.out <- round(d,digits)
-	cat("Standardized Mean Difference of ", Ynm, ", Cohen's d:  ", d.out, sep="", "\n")
+	smd <- mdiff/sw
+	smd.out <- round(smd,digits)
+	cat("Standardized Mean Difference of ", Ynm, ", Cohen's d:  ", smd.out, sep="", "\n")
 
 
 
 	cat("\n\n------ Assumptions ------\n\n")
 
-	cat("Note:  These hypothesis tests perform poorly in small samples, and", "\n")
-	cat("       the t-test is typically robust to violations of assumptions.", "\n")
+	cat("Note:  These hypothesis tests can perform poorly, and the", "\n")
+	cat("       t-test is typically robust to violations of assumptions.", "\n")
 	cat("       Use as heuristic guides instead of interpreting literally.", "\n\n")
 
 	# Normality
-	cat("Null hypothesis, for each group, is a normal distribution of ", Ynm, ".", sep="", "\n")
+	cat("Null hypothesis, for each group, is a normal distribution of ", sep="")
+	cat(Ynm, ".", sep="", "\n")
 	if (n1 > 30) {
-		cat("Group " , X1nm, ": ", "Sample mean is normal because n>30, so no test needed.", sep="", "\n")
+		mytitle <- 
+		cat("Group " , X1nm, ": ", sep="")
+		cat("Sample mean is normal because n>30, so no test needed.", sep="", "\n")
 	}
 	else {
 		cat("Group", X1nm, " ")
@@ -77,7 +83,8 @@ function(YA, YB) {
 			cat("Sample size out of range for Shapiro-Wilk normality test.", "\n")
 	}	
 	if (n2 > 30) {
-		cat("Group " , X2nm, ": ", "Sample mean is normal because n>30, so no test needed.", sep="", "\n")
+		cat("Group " , X2nm, ": ", sep="")
+		cat("Sample mean is normal because n>30, so no test needed.", sep="", "\n")
 	}
 	else {
 		cat("Group", X2nm, " ")
@@ -94,15 +101,17 @@ function(YA, YB) {
 
 	# Homogeneity of Variance
 	# Var Ratio
+	v1.out <- toString(round(v1,digits+1))
+	v2.out <- toString(round(v2,digits+1))
 	if (v1 >= v2) {
 		vratio <- v1/v2
-		vr <- paste(toString(round(v1,digits+1)), "/", toString(round(v2,digits+1)), sep="")
+		vr <- paste(v1.out, "/", v2.out, sep="")
 		df.num <- df1
 		df.den <- df2
 	}
 	else {
 		vratio <- v2/v1
-		vr <- paste(toString(round(v2,digits+1)), "/", toString(round(v1,digits+1)), sep="")
+		vr <- paste(v2.out, "/", v1.out, sep="")
 		df.num <- df2
 		df.den <- df1
 	}
@@ -110,13 +119,15 @@ function(YA, YB) {
 	v.out <- round(vratio,digits+1)
 
 	p.var <- pf(vratio, df1=df.num, df2=df.den)
-	p.var <- 2 * min(p.var, 1-p.var)  # adjust for two-sided test, results same as var.test{stats}
+  # adjust for two-sided test, results same as var.test{stats}
+  p.var <- 2 * min(p.var, 1-p.var)
 	pv.out <- round(p.var,min(4,digits+1))
 
-	cat("Null hypothesis is equal variances of ", Ynm, ", i.e., homogeneous.", sep="", "\n")
+	cat("Null hypothesis is equal variances of ")
+	cat(Ynm, ", i.e., homogeneous.", sep="", "\n")
 
-	cat("Variance Ratio test:  F = ", vr, " = ", v.out, ",  df = ", df.num, ";", df.den, ",  p-value = ", 
-			pv.out, sep="", "\n")
+	cat("Variance Ratio test:  F = ", vr, " = ", v.out, ",  df = ", df.num, ";", 
+	    df.den, ",  p-value = ", 			pv.out, sep="", "\n")
 
 	# Levene
 	YAm <- abs(YA - median(YA))
@@ -125,8 +136,8 @@ function(YA, YB) {
 	tvalue.bf <- round(t.bf$statistic,min(4,digits+1))
 	df.bf <- round(t.bf$parameter,min(4,digits+1))
 	pvalue.bf <- round(t.bf$p.value,min(4,digits+1))
-	title <- "Levene's test, Brown-Forsythe"
-	cat(title,":  t = ", tvalue.bf, ",  df = ", df.bf, ",  p-value = ", pvalue.bf, sep="", "\n")
+	cat("Levene's test, Brown-Forsythe:  t = ", tvalue.bf, ",  df = ", df.bf, sep="")
+	cat(",  p-value = ", pvalue.bf, sep="", "\n")
 
 
 
@@ -143,14 +154,16 @@ function(YA, YB) {
 	ub <- round(tt$conf[2],digits)
 	E <- round((ub-lb)/2,digits)
 	df <- tt$parameter
-	cat("Hypothesis Test of 0 Mean Diff:  t = ", tvalue, ",  df = ", df, ",  p-value = ", pvalue, sep="", "\n\n")
+	mytitle <- "Hypothesis Test of 0 Mean Diff:  t = "
+	cat(mytitle, tvalue, ",  df = ", df, ",  p-value = ", pvalue, sep="", "\n\n")
 	cat("Margin of Error for ", clpct, " Confidence Level:  ", E, sep="", "\n")
-	cat(clpct," Confidence Interval for Mean Difference:  ", lb, " to ", ub, sep="", "\n\n")
+	cat(clpct," Confidence Interval for Mean Difference:  ", lb, " to ", ub, 
+	    sep="", "\n\n")
 
 	# smd confidence interval	
 	check.MBESS <- suppressWarnings(require(MBESS, quietly=TRUE))
 	if (check.MBESS) {
-		cid <- ci.smd(smd=d, n.1=n1, n.2=n2, conf.level=conf.level)
+		cid <- ci.smd(smd=smd, n.1=n1, n.2=n2, conf.level=conf.level)
 		deltaL <- round(cid$Lower.Conf.Limit.smd,digits)
 		deltaU <- round(cid$Upper.Conf.Limit.smd,digits)
 		cat(clpct," Confidence Interval for smd:  ", deltaL, " to ", deltaU, sep="", "\n")
@@ -162,61 +175,93 @@ function(YA, YB) {
 		cat(">>> IGNORE resulting 'Error in eval' error message below.", "\n")
 	}
 
+		cat("\n\n------ Practical Importance ------\n\n")
+		cat("Minimum Mean Difference of practical importance: mmd\n")
+	if ( !is.null(mmd) | !is.null(msmd) ) {
+		if (!is.null(mmd)) msmd <- mmd / sw
+		if (!is.null(msmd)) mmd <- msmd * sw
+		cat("Compare mmd =", round(mmd,digits), " to the obtained value of md = ", mdiff.out, "\n")
+		cat("Compare mmd to the confidence interval for md: ", lb, " to ", ub, "\n\n")
+		cat("Minimum Standardized Mean Difference of practical importance: msmd\n")
+		cat("Compare msmd = ", round(msmd,digits), " to the obtained value of smd = ", smd.out,"\n")
+		cat("Compare msmd to the confidence interval for smd: ", deltaL, " to ", deltaU, "\n")
+	}
+	else {
+		cat("Minimum Standardized Mean Difference of practical importance: msmd\n")
+		cat("Neither value specified, so no analysis\n")
+	}
 
-
-	cat("\n\n------ Graphics Smoothing Parameter ------\n\n")
 
 	# densities
 	dYA <- density(YA, bw1)
 	dYB <- density(YB, bw2)
-	cat("Density bandwidth for ", Xnm, " ", X1nm, ": ", round(dYA$bw,digits), sep="", "\n")
-	cat("Density bandwidth for ", Xnm, " ", X2nm, ": ", round(dYB$bw,digits), sep="", "\n\n")
 
+	cat("\n\n------ Graphics Smoothing Parameter ------\n\n")
+	mytitle <- "Density bandwidth for "
+	cat(mytitle, Xnm, " ", X1nm, ": ", round(dYA$bw,digits), sep="", "\n")
+	cat(mytitle, Xnm, " ", X2nm, ": ", round(dYB$bw,digits), sep="", "\n\n")
 	cat("--------------------------------------------------\n")
 
 
 	# values needed for graph
-	minYA.x <- min(dYA$x)
-	maxYA.x <- max(dYA$x)
-	minYB.x <- min(dYB$x)
-	maxYB.x <- max(dYB$x)
-
-	min.x <- min(minYA.x,minYB.x)  # min x coordinate for graph
-	max.x <- max(maxYA.x,maxYB.x)  # max x coordinate for graph
+	min.x <- min(min(dYA$x),min(dYB$x))  # min x coordinate for graph
+	max.x <- max(max(dYA$x),max(dYB$x))  # max x coordinate for graph
 	max.y <- max(max(dYA$y),max(dYB$y))  # max y coordinate
 	max.y <- max.y+.1*max.y  # allow room in graph region for d info
 
-	# graph
+	# colors
 	col.1 <- rgb(.63,.46,.15)
 	col.1t <- rgb(.63,.46,.15, alpha=.5)
 	col.2 <- rgb(.49,.56,.69)
 	col.2t <- rgb(.49,.56,.69, alpha=.5)
 
+  # set up coordinate system
 	par(mar=c(3,3,8,.4), mgp=c(2,.6,0), cex.axis=1, cex.lab=1)
 	plot.new()
-	plot.window(xlim=c(min.x,max.x), ylim=c(0,max.y))  # set up coordinate system
+	plot.window(xlim=c(min.x,max.x), ylim=c(0,max.y))
 	axis(1); axis(2); box()
 	title(xlab=Ynm, ylab="Density")
 
 	xleft <- par("usr")[1]  # left side of graph
 	xright <- par("usr")[2]  # right side of graph
-	ytop <- par("usr")[4]  # height of graph
 	ybot <- par("usr")[3]  # bottom of graph
+	ytop <- par("usr")[4]  # height of graph
 
-	lines(c(m1,m1), c(0,ytop), lty="solid", lwd=2, col=col.1)  # vertical line for mean
+  # vertical line for mean
+  lines(c(m1,m1), c(0,ytop), lty="solid", lwd=2, col=col.1)
 	lines(c(m2,m2), c(0,ytop), lty="twodash", lwd=2, col=col.2)
-	polygon(c(minYA.x,dYA$x,maxYA.x), c(0,dYA$y,0), col=col.1t, border=NA, density=10, angle=45)  # curve area
-	polygon(c(minYB.x,dYB$x,maxYB.x), c(0,dYB$y,0), col=col.2t, border=NA, density=10, angle=-45)
-	segments(minYA.x, 0, maxYA.x, 0, col=col.1)  # bottom border of density curve
-	segments(minYB.x, 0, maxYB.x, 0, col=col.2)
-	lines(dYA, col=col.1t, lty="solid", lwd=1.5)  # density curve
+  # curve area
+  polygon(c(min(dYA$x),dYA$x,max(dYA$x)), c(0,dYA$y,0), col=col.1t, border=NA, 
+    density=10, angle=45)
+	polygon(c(min(dYB$x),dYB$x,max(dYB$x)), c(0,dYB$y,0), col=col.2t, border=NA, 
+	  density=10, angle=-45)
+  # bottom border of density curve	
+  segments(min(dYA$x), 0, max(dYA$x), 0, col=col.1)
+	segments(min(dYB$x), 0, max(dYB$x), 0, col=col.2)
+  # density curve
+  lines(dYA, col=col.1t, lty="solid", lwd=1.5)
 	lines(dYB, col=col.2t, lty="twodash", lwd=1.5)
-	col.lgnd <- "gray25"
-	cex.lgnd <- .9
+	
+	# minimum mean difference of practical importance
+	if ( !is.null(mmd) | !is.null(msmd) ) {
+		col.e <- "gray50"  # color for effect
+		mid <- (m1 + m2) / 2
+		lr <- mid + .5*mmd  # line right
+		ll <- mid - .5*mmd  # line left
+		lines(c(lr,lr), c(ybot+.44*max.y,ytop-.44*max.y), lty="solid", lwd=2, col=col.e)
+		lines(c(ll,ll), c(ybot+.44*max.y,ytop-.44*max.y), lty="solid", lwd=2, col=col.e)
+		text(mid, ybot+.41*max.y, label=toString(round(mmd,2)), col=col.e)
+		text(mid, ytop-.41*max.y, label=toString(round(msmd,2)), col=col.e)
+		text(mid, ybot+.38*max.y, label="mmd", col=col.e)
+		text(mid, ytop-.375*max.y, label="msmd", col=col.e)
+  }
 
 	# legends with descriptive stats (m1 > m2)
 	textR <- paste(Xnm,X1nm);  nR <- n1;  mR <- m1.out;  sR <- s1.out;  col.R <- col.1;  aR <- 45
 	textL <- paste(Xnm,X2nm);  nL <- n2;  mL <- m2.out;  sL <- s2.out;  col.L <- col.2;  aL <- -45
+
+	col.lgnd <- "gray25"
+	cex.lgnd <- .9
 
 	radj <- xleft + .02*(max.x-min.x)
 	legend("topleft", legend = textL, fill=col.L, density=20, angle=aL, bty="n",
@@ -236,29 +281,41 @@ function(YA, YB) {
 	mlow <- min(m1, m2)
 	mhi  <- max(m1, m2)
 	col.d.unit <- "gray30"
-	segments(mlow, max.y-.01*max.y, mlow, ytop, lwd=1, col=col.d.unit) # connect first seg to top
-	max.i <- max(ceiling(abs(d)), 2)  # provide at least 2 labeled d units on sd scale at top
+  # connect first seg to top
+  segments(mlow, max.y-.01*max.y, mlow, ytop, lwd=1, col=col.d.unit) 
+  # provide at least 2 labeled d units on sd scale at top
+	max.i <- max(ceiling(abs(smd)), 2)
 	for (i in 0:max.i) {  # sd scale at top
 		x.i <- mlow+i*sw
-		segments(x.i, max.y+.025*max.y, x.i, ytop, col=col.d.unit, lwd=1)  # sd units
-		text(x.i, max.y+.01*max.y, labels=i)  # d units counted
-		segments(mlow, ytop, x.i, ytop, col=col.d.unit, lwd=4)  # horiz bar connects endpoints
+    # sd units
+    segments(x.i, max.y+.025*max.y, x.i, ytop, col=col.d.unit, lwd=1)
+    # d units counted
+    text(x.i, max.y+.01*max.y, labels=i)
+    # horiz bar connects endpoints
+    segments(mlow, ytop, x.i, ytop, col=col.d.unit, lwd=4)
 		last.coord.x <- x.i
 	}
-	segments(last.coord.x, max.y+.025*max.y, last.coord.x, ytop, lwd=1, col=col.d.unit) # connect last seg to top
-	text((m1+m2)/2, ytop-.07*max.y, label=d.out)  # print d value towards top
-	segments(mlow, ytop-.09*max.y, mhi, ytop-.09*max.y, col=col.d.unit, lwd=2)  # horiz bar connects means
-	text((m1+m2)/2, ytop-.11*max.y, label="d")  # print d towards top
+	# connect last seg to top
+	segments(last.coord.x, max.y+.025*max.y, last.coord.x, ytop, lwd=1, col=col.d.unit)
+  # print d value towards top
+  text((m1+m2)/2, ytop-.07*max.y, label=smd.out)
+	# horiz bar connects means
+	segments(mlow, ytop-.09*max.y, mhi, ytop-.09*max.y, col=col.d.unit, lwd=2)
+	# print d towards top
+	text((m1+m2)/2, ytop-.11*max.y, label="smd")
 	
-	text((m1+m2)/2, ybot+.11*max.y, label=mdiff.out)  # print mdiff value towards bottom
-	segments(mlow, ybot+.09*max.y, mhi, ybot+.09*max.y, col=col.d.unit, lwd=2)  # horiz bar connects means
-	text((m1+m2)/2, ybot+.07*max.y, label="diff")  # print diff towards bottom
+  # print mdiff value towards bottom	
+  text((m1+m2)/2, ybot+.11*max.y, label=mdiff.out)
+  # horiz bar connects means
+  segments(mlow, ybot+.09*max.y, mhi, ybot+.09*max.y, col=col.d.unit, lwd=2)
+  # print diff towards bottom
+  text((m1+m2)/2, ybot+.07*max.y, label="md")
 
 	# title area, above graph
 	mtext(paste("ODDSMD Plot"), side=3, line=6.6, font=2)
 	mtext(paste("Compare",Ynm,"for",Xnm,X1nm,"and",X2nm), side=3, line=5.6, font=3)
-	mtext(bquote(paste("    Classic t-test of 0 mean diff:   t = ", .(tvalue), ",  df = ", .(df),
-		",   p-value = ", .(pvalue))), side=3, line=4.4, cex=1.08, adj=0)
+	mtext(bquote(paste("    Classic t-test of 0 mean diff:   t = ", .(tvalue), 
+	  ",  df = ", .(df), ",   p-value = ", .(pvalue))), side=3, line=4.4, cex=1.08, adj=0)
 	mtext(bquote(paste("    ",.(clpct), " Confidence Interval for Mean Difference: ",
 		.(lb), " to ", .(ub))), side=3, line=3.3, cex=1.08, adj=0)
 	mtext(bquote(paste("    ",.(clpct), " Confidence Interval for Stnd Mean Diff:   ", 
@@ -268,7 +325,11 @@ function(YA, YB) {
 
 }
 
-	if ( (length(x) < 2) | (length(y) < 2) ) stop("Need at least two observations per sample.")
+	if ( (length(x) < 2) | (length(y) < 2) ) 
+	    stop("Need at least two observations per sample.")
+	
+	if ( !is.null(mmd) && !is.null(msmd) )
+	    stop("Specify only one of mmd and msmd as one implies the other.")
 
 	# Always put the group with the largest mean first
 	if (mean(x) > mean(y))

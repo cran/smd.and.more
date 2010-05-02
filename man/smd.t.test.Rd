@@ -6,23 +6,16 @@
 \title{Generic Method for t-test and Standardized Mean Difference with Enhanced Graphics}
 
 \description{
-Provides enhanced output from the standard \code{t.test} function applied to
-the independent groups analysis of the mean difference.  
-This output includes the basic descriptive statistics, the pooled or 
-within-group standard deviation, and the standardized mean difference or Cohen's \emph{d} and its
-confidence interval, as well
-as an evaluation of assumptions. The output
-introduces the \acronym{ODDSMD} plot, which displays the Overlapping Density Distributions of the 
-two groups as well as the means, mean difference and Standardized Mean Difference. 
-The plot also includes the results of the descriptive and inferential analyses.
+Provides enhanced output from the standard \code{\link{t.test}} function applied to the independent groups analysis of the mean difference. This output includes the basic descriptive statistics, the pooled or within-group standard deviation, and the standardized mean difference or Cohen's \emph{d} and its confidence interval, as well as an evaluation of assumptions. The output introduces the \acronym{ODDSMD} plot, which displays the Overlapping Density Distributions of the two groups as well as the means, mean difference and Standardized Mean Difference. The plot also includes the results of the descriptive and inferential analyses.
 }
 
 \usage{
-smd.t.test(x, ...)
+smd.t.test(x, \ldots)
 
 \method{smd.t.test}{default}(x, y, Ynm = "Y", Xnm = "X", 
-           X1nm = "Group1", X2nm = "Group2", conf.level = 0.95,
-           digits = 2, bw1 = "nrd", bw2 = "nrd", \dots)
+       X1nm = "Group1", X2nm = "Group2", conf.level = 0.95, 
+       mmd = NULL, msmd = NULL, digits = 2, 
+       bw1 = "nrd", bw2 = "nrd", \dots)
 
 \method{smd.t.test}{formula}(formula, data, \dots)
 }
@@ -35,53 +28,52 @@ smd.t.test(x, ...)
         the formula. By default the variables are taken from environment (formula).}
   \item{conf.level}{Confidence level of the interval, expressed as a proportion.}
   \item{digits}{Number of decimal places for which to display numeric values. Suggestion only.}
-  \item{bw1}{Bandwidth for the computation of the densities for the first group.}
-  \item{bw2}{Bandwidth for the computation of the densities for the second group.}
   \item{x}{Values of response variable for first group.}
   \item{y}{Values of response variable for second group.}
   \item{Ynm}{Name of response variable.}
-  \item{Xnm}{Name of predictor variable, the grouping variable or factor with exactly two levels.}
+  \item{Xnm}{Name of predictor variable, the grouping variable or factor with exactly
+         two levels.}
   \item{X1nm}{Value of grouping variable, the level that defines the first group.}
   \item{X2nm}{Value of grouping variable, the level that defines the second group.}
+  \item{mmd}{Minimum Mean Difference of practical importance, the difference of the
+       response variable between two group means. The concept is optional, and only one of mmd and msmd is provided.}
+  \item{msmd}{For the Standardized Mean Difference, Cohen's d, the Minimum value of
+       practical importance. The concept is optional, and only one of mmd and msmd is provided.}
+  \item{bw1}{Bandwidth for the computation of the densities for the first group.}
+  \item{bw2}{Bandwidth for the computation of the densities for the second group.}
   \item{\dots}{Further arguments to be passed to or from methods.}
 }
 
 \details{
-The two methods for the generic function \code{smd.t.test} are formula and default.  
-Apply the formula method when the data are in a standard dataframe
-that includes a variable, a factor generically referred to as X, that has exactly two values, 
-and a numerical response variable, generically referred to as Y.
-The formula is of the form Y ~ X, with the names Y and X replaced by the actual variable names specific
-to a particular analysis.  The formula method automatically retrieves the names of the variables and
-data values for display on the resulting output.
+Following the format and syntax of the standard \code{\link{t.test}} function, the two methods for the generic function \code{smd.t.test} are formula and default.  The formula method is invoked when the data are in a standard data frame that includes a variable that has exactly two values, a factor generically referred to as X, and a numerical response variable, generically referred to as Y. The formula is of the form Y ~ X, with the names Y and X replaced by the actual variable names specific to a particular analysis.  The formula method automatically retrieves the names of the variables and data values for display on the resulting output.
 
-The default method requires two vectors of data, the values of the
-response variable Y for each of the two groups.  When submitting data to \code{smd.t.test} as two vectors,
-the results are enhanced if  
-the actual names of the variables referred to generically as X and Y, as well as the names of the 
-levels of the factor X, are explicitly provided. 
+The default method is invoked when the values of the response variable Y are organized into two vectors, the values of Y for each group in the corresponding vector.  When submitting data in this form, the output is enhanced if the actual names of the variables referred to generically as X and Y, as well as the names of the levels of the factor X, are explicitly provided. 
 
-This version of \code{smd.t.test} assumes homogeneity of variance in the computation of the
-standard error of the mean difference. Also, only a two-sided test is provided.  The null hypothesis is a
-population mean difference of 0.
+This version of \code{smd.t.test} assumes homogeneity of variance in the computation of the standard error of the mean difference. Also, only a two-sided test is provided.  The null hypothesis is a population mean difference of 0.
 
-The bandwidth parameter controls the smoothness of the estimated density curve.  To obtain a smoother curve,
-increase the bandwidth from the default value.
+The bandwidth parameter controls the smoothness of the estimated density curve.  To obtain a smoother curve, increase the bandwidth from the default value.
 
-For the output, the two groups are automatically arranged so that the group with the larger mean 
-is listed as the first group.  The result is 
-that the resulting mean difference, as well as the standardized mean difference, is always non-negative.
+For the output, the two groups are automatically arranged so that the group with the larger mean is listed as the first group.  The result is that the resulting mean difference, as well as the standardized mean difference, is always non-negative.
+
+The practical importance of the size of the mean difference is addressed when one of two parameter values are supplied, the minimum mean difference of practical importance, mmd, or the corresponding standardized version, msmd.  The  remaining value is calculated and both values are added to the graph and the console output.
+
+After running \code{smd.t.test}, the following statistics are available for further analysis: sample sizes n1 and n2, sample means m1 and m2, sample standard deviations, s1 and s2, plus the within-group or pooled standard deviation, sw. For example, if the t-test does not achieve significance, then n1, n2 and sw (or s1 and s2) can be used to construct a power curve with a call, exactly as written, to \cr
+\code{\link{powercurve.t.test}(n1=n1, n2=n2, s=sw)}.  
 }
 
 \author{David W. Gerbing (Portland State University; \email{davidg@sba.pdx.edu})}
+
+\seealso{
+\code{\link{t.test}}, \code{\link{density}}, \code{\link{plot.density}}, \code{\link{powercurve.t.test}}.
+}
 
 \examples{
 # ----------------------------------------------------------
 # Data stored in a dataframe, call smd.t.test with a formula
 # ----------------------------------------------------------
 
-# Create dataframe with simulated data
-n <- 10
+# Create dataframe with simulated data, no population mean difference
+n <- 12
 X <- sample(c("Group1","Group2"), size=n, replace=TRUE)
 Y <- rnorm(n=n, mean=50, sd=10)
 mydata <- data.frame(cbind(X,Y))
@@ -93,6 +85,9 @@ attach(mydata)
 # Y is numeric, X has two values only
 # Variable names and levels of X are automatically obtained from data
 smd.t.test(Y ~ X)
+
+# Consider the practical importance of the difference
+smd.t.test(Y ~ X, msmd=.5)
 
 
 # -------------------------------------------------------
