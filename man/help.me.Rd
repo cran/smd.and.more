@@ -1,55 +1,74 @@
 \name{help.me}
 \alias{help.me}
 
-\title{Help System for Statistics that Suggests Specified Functions}
+\title{Help System for Statistics by Topic that Suggests Related Functions}
 
 \description{
-R works by entering function names and arguments.  R provides extensive help for each available function based on a function's name, but these names are not apparent to someone who has not memorized them or has access to their definitions.  To alleviate this problem, this help system suggests and briefly explains various function calls regarding a requested type of basic statistical analysis.
+R works by entering function names and arguments.  R provides extensive help for each available function based on a function's name, but these names are not apparent to someone who has not memorized them or has access to their definitions.  To alleviate this problem, this help system suggests and briefly explains various function calls regarding a requested topic for statistical analysis.
 }
 
 \usage{
-help.me(ref=NULL)
+help.me(topic=NULL)
 }
 
 
 \arguments{
-  \item{ref}{Message reference, either null to specify a list of available topics or a specific argument to reference a specific help message.}
+  \item{topic}{Message reference, either null to specify a list of available topics or a specific argument to reference a specific help message.}
 }
 
 
 \details{
 \code{help.me()} displays a list of help topics, listed below.
 
-\code{help.me("reference")} displays a message regarding a specific function or related functions for the specified topic.
+\code{help.me("topic")} generally displays the available functions relevant for the specified topic.
+
+\code{help.me("help.to.pdf")} generates a pdf file of the full contents of all the help topics.
 
 ---
 
-\code{create.data.file}: Create a csv data file from a worksheet application.
+\code{data}: Create a csv data file from a worksheet application.
 
-\code{libraries}: Run charts, scatterplots, function graphs.
+\code{read}: Read an external data file in csv format.
 
-\code{read.data}: Read an external data file in csv format.
+\code{write}: Write the contents of mydata to a data file in csv format.
+
+\code{library}: Many libraries of functions developed by others can be added to R.
 
 ---
 
-\code{stats}: Summary statistics.
+\code{prob}: Probabilities for Normal and t-distributions.
+
+\code{random}: Random number generation.
+
+\code{sample}: Generate random samples.
+
+---
 
 \code{histogram}: Histogram of a numeric variable.
 
 \code{bar.chart}: Bar chart of a categorical variable.
 
-\code{one.group}: Analyzing a single sample of data.
+\code{plot}: Run charts, scatterplots, function graphs.
 
-\code{compare.groups}: Analysis of group mean differences and more.
+---
+
+\code{stats}: Summary statistics.
+
+\code{one.sample}: Analysis of a single sample of data.
+
+\code{two.samples}: The mean difference and related statistics.
+
+\code{many.samples}: Compare means across two or more groups.
+
+\code{props}: Compare proportions across two or more groups.
 
 \code{power}: Power analysis for the t-test.
 
 \code{cor}: Correlation analysis.
 
-\code{regression}: Regression analysis.
-
-\code{plot.values}: Run charts, scatterplots, function graphs.
+\code{reg}: Regression analysis.
 }
+
 
 \author{David W. Gerbing (Portland State University; \email{davidg@sba.pdx.edu})}
 

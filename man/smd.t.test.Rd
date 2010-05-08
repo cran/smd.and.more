@@ -21,9 +21,8 @@ smd.t.test(x, \ldots)
 }
 
 \arguments{
-  \item{formula}{Formula of the form Y ~ X, where Y is the numeric response variable 
-        compared across the two groups, and X is a grouping variable (factor) with two levels that define
-        the corresponding groups.}
+  \item{formula}{A \code{\link{formula}} of the form Y ~ X, where Y is the 
+        numeric response variable compared across the two groups, and X is a grouping variable (factor) with two levels that define the corresponding groups.}
   \item{data}{An optional matrix or data frame containing the variables in 
         the formula. By default the variables are taken from environment (formula).}
   \item{conf.level}{Confidence level of the interval, expressed as a proportion.}
@@ -45,7 +44,7 @@ smd.t.test(x, \ldots)
 }
 
 \details{
-Following the format and syntax of the standard \code{\link{t.test}} function, the two methods for the generic function \code{smd.t.test} are formula and default.  The formula method is invoked when the data are in a standard data frame that includes a variable that has exactly two values, a factor generically referred to as X, and a numerical response variable, generically referred to as Y. The formula is of the form Y ~ X, with the names Y and X replaced by the actual variable names specific to a particular analysis.  The formula method automatically retrieves the names of the variables and data values for display on the resulting output.
+Following the format and syntax of the standard \code{\link{t.test}} function, the two methods for the generic function \code{smd.t.test} are formula and default.  The formula method is invoked when the data include a variable that has exactly two values, a grouping variable or factor generically referred to as X, and a numerical response variable, generically referred to as Y. The formula is of the form Y ~ X, with the names Y and X replaced by the actual variable names specific to a particular analysis.  The formula method automatically retrieves the names of the variables and data values for display on the resulting output.
 
 The default method is invoked when the values of the response variable Y are organized into two vectors, the values of Y for each group in the corresponding vector.  When submitting data in this form, the output is enhanced if the actual names of the variables referred to generically as X and Y, as well as the names of the levels of the factor X, are explicitly provided. 
 
@@ -64,25 +63,21 @@ After running \code{smd.t.test}, the following statistics are available for furt
 \author{David W. Gerbing (Portland State University; \email{davidg@sba.pdx.edu})}
 
 \seealso{
-\code{\link{t.test}}, \code{\link{density}}, \code{\link{plot.density}}, \code{\link{powercurve.t.test}}.
+\code{\link{t.test}}, \code{\link{density}}, \code{\link{plot.density}}, \code{\link{powercurve.t.test}}, \code{\link{formula}}.
 }
 
 \examples{
 # ----------------------------------------------------------
-# Data stored in a dataframe, call smd.t.test with a formula
+# Data simulated, call smd.t.test with a formula
 # ----------------------------------------------------------
 
-# Create dataframe with simulated data, no population mean difference
+# Create simulated data, no population mean difference
+# X has two values only, Y is numeric
 n <- 12
 X <- sample(c("Group1","Group2"), size=n, replace=TRUE)
 Y <- rnorm(n=n, mean=50, sd=10)
-mydata <- data.frame(cbind(X,Y))
-names(mydata) <- c("X","Y")
-# Attach the dataframe
-attach(mydata)
 
 # Analyze data with formula version
-# Y is numeric, X has two values only
 # Variable names and levels of X are automatically obtained from data
 smd.t.test(Y ~ X)
 

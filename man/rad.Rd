@@ -13,10 +13,10 @@ rad(ref=NULL, ...)
 
 
 \arguments{
-  \item{ref}{File reference, either null to specify the default of \code{file.choose()} to browse
-       for the csv data file, or a full path name or web URL, included in quotes.  A URL begins 
-       with \code{http://}.}
-  \item{...}{Other parameter values consistent with the usual \code{read.csv} function, such as row.names and header.}
+  \item{ref}{File reference, either null to specify the default of 
+       code{file.choose()} to browse for the csv data file, or a full path name or web URL, included in quotes.  A URL begins with \code{http://}.}
+  \item{...}{Other parameter values consistent with the usual \code{read.csv}
+       function, such as row.names and header.}
 }
 
 

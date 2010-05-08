@@ -33,7 +33,7 @@ if (nargs() > 1) cat("Plus the optional arguments that were entered in rad.", "\
 cat("\n")
 cat("Name of data frame that contains the data:   mydata ", "\n")
 cat("Number of Variables in mydata:    ", ncol(mydata), "\n")
-cat("Number of Observations in mydata: ", nrow(mydata), "\n\n")
+cat("Number of Rows of Data in mydata: ", nrow(mydata), "\n\n")
 
 cat(line, pre, " attach(mydata)", sep="", "\n")
 attach(mydata, warn.conflicts=FALSE)

@@ -2,7 +2,7 @@ smd.t.test.formula <-
 function (formula, data, ...) {
 
 	if ((length(formula) != 3) || (length(attr(terms(formula[-2]),"term.labels")) != 1)) 
-			stop("'formula' missing or incorrect")
+			stop("'Formula' missing or incorrect.")
 	m <- match.call(expand.dots = FALSE)
 	if (is.matrix(eval(m$data, parent.frame()))) 
 			m$data <- as.data.frame(data)
@@ -16,7 +16,7 @@ function (formula, data, ...) {
 	response <- attr(attr(mf, "terms"), "response")
 	g <- factor(mf[[-response]])
 	if (nlevels(g) != 2) 
-			stop("grouping factor must have exactly 2 levels")
+			stop("Grouping factor must have exactly 2 levels.")
 	gu <- unique(g)
 	DATA <- split(mf[[response]], g)
 	names(DATA) <- c("Y1", "Y2")
